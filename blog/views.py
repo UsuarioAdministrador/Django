@@ -1,8 +1,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+from django.core.mail import send_mail, BadHeaderError
 from .models import Post,Comment
-from .forms import PostForm, CommentForm
+from .forms import PostForm, CommentForm, ContactForm
 
 def post_list(request):
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('published_date')
@@ -80,3 +81,23 @@ def comment_remove(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     comment.delete()
     return redirect('post_detail', pk=comment.post.pk)
+
+def contact(request):
+    if request.method == 'GET':
+        email_form = ContactForm()
+    else:
+        email_form = ContactForm(request.POST)
+        if email_form.is_valid():
+            emitter = email_form.cleaned_data['emissor']
+            subject = email_form.cleaned_data['assunto']
+            message = email_form.cleaned_data['mensagem']
+
+            try:
+                send_mail(subject, message, emitter, ['vinicius.vs1998@ifsc.edu.br'])
+            except BadHeaderError:
+                return HttpResponse("Erro =/")
+            return redirect('obg')
+    return render(request, 'blog/email.html', {'form': email_form})
+
+def obg(request):
+    return HttpResponse("<h2>Obrigado pela mensagem!!!</h2>")
