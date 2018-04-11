@@ -2,6 +2,7 @@
 
 {% block content %}
     <div class="post">
+        <h1>Enviar e-mail</h1>
         <form method="post" class="post-form">
             {% csrf_token %}
             {{ form.as_p }}

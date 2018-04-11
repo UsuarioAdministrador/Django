@@ -19,8 +19,10 @@
     </div>
 
     <hr>
-    <a class="btn btn-default" href="{% url 'add_comment_to_post' pk=post.pk %}">Adicionar comentário</a>
-    <a href="{% url 'contact' %}"> (...) </a>
+    <a class="btn btn-default" href="{% url 'add_comment_to_post' pk=post.pk %}">Comentar</a>
+    <a class="btn btn-warning" href="{% url 'contact' %}"><span class="glyphicon glyphicon-envelope"></span></a>
+    <br/>
+    <br/>
     {% for comment in post.comments.all %}
         {% if user.is_authenticated or comment.approved_comment %}
             <div class="comment">
@@ -36,6 +38,8 @@
             </div>
         {% endif %}
     {% empty %}
+        <br/>
+        <br/>
         <p>Nenhum comentário aqui ainda :(</p>
     {% endfor %}
 {% endblock %}
